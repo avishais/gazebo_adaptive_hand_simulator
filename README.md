@@ -6,7 +6,7 @@ The simulator offers three hands: Reflex, Model-O and Model-T42 (Yale OpenHand p
     
     2. Set the 'is_model_O_reflex' argument in hand_control.launch to 'true' for the reflex/model-O or 'false' for model-T42.
     
-    3. In gripper.yaml, 'set gripper_type' name.
+    3. In gripper.yaml, set 'gripper_type' name.
     
 To run the simulation:
 
