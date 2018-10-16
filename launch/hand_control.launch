@@ -3,6 +3,8 @@
   <!-- Choose the type: true - model_O and reflex, false - model T42 -->
   <arg name="model3" default="false"/> 
 
+  <!-- <node name="joint_state_controller_spawner" pkg="controller_manager" type="spawner" output="screen" args="joint_state_controller" ns="/hand" /> -->
+
   <group if="$(arg model3)">
     <!-- Load joint controller configurations from YAML file to parameter server -->
     <rosparam file="$(find hand_simulator)/config/hand_effort_control.yaml" command="load"/>
@@ -20,8 +22,6 @@
     <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
       output="screen" ns="/hand" args="rail_to_base_controller base_to_finger_1_1_position_controller finger_1_1_to_finger_1_2_position_controller base_to_finger_2_1_position_controller finger_2_1_to_finger_2_2_position_controller "/>
   </group>
-
-  <node name="joint_state_controller_spawner" pkg="controller_manager" type="spawner" output="screen" args="joint_state_controller" ns="/hand" />
 
   <!-- <node pkg="robot_state_publisher" type="robot_state_publisher"  name="robot_state_publisher">
     <param name="publish_frequency" type="double" value="30.0" />

@@ -7,6 +7,7 @@
   <arg name="headless" default="false"/>
   <arg name="debug" default="false"/>
   <arg name="gripper" default="model_T42"/> 
+  <arg name="fingers3" default="false"/>
   <!-- <arg name="world" default="$(find hand_simulator)/worlds/hand.world"/> -->
 
   <!-- We resume the logic in empty_world.launch, changing only the name of the world to be launched -->
@@ -36,6 +37,11 @@
     <rosparam command="load" file="$(find hand_simulator)/param/gripper.yaml" />  
   </node>
   <node pkg="hand_simulator" type="object_state_publisher.py" name="object_state_publisher" output="screen"></node>
+
+  <include file="$(find hand_simulator)/launch/hand_control.launch">
+    <arg name="model3" value="$(arg fingers3)" />
+  </include>
+
 
 </launch>
 
