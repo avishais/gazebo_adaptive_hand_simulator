@@ -6,9 +6,14 @@ To run the simulation:
 
     1. In gripper.yaml, set 'gripper_type' name ('reflex','model_O','model_T42').
     
-    2. roslaunch hand_simulator hand.launch model:={hand_reflex,hand_O,'hand_T42'} (Loads the environment).
-    
-    2. roslaunch hand_simulator hand_control.launch model3:={true for reflex or O, false for T42} (Loads the controller).
-    
-    3. rosrun hand_simulator keyboard_control.py (Loads keyboard control - tested only on the Model-T42).
+    2. For reflex hand:
+       roslaunch hand_simulator hand.launch model:=hand_reflex fingers3:=true
+       
+    3. For Model_O hand:
+       roslaunch hand_simulator hand.launch model:=hand_O fingers3:=true
+       
+    4. For Model_T42 hand:
+       roslaunch hand_simulator hand.launch model:=hand_T42 fingers3:=false
+        
+    5. rosrun hand_simulator keyboard_control.py (Loads keyboard control - tested only on the Model-T42).
     
