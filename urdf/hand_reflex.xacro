@@ -519,6 +519,7 @@
       </actuator>
       <joint name="finger_1_1_to_finger_1_2">
           <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+      </joint>
   </transmission>
 
   <transmission name="finger1_3_trans" type="SimpleTransmission">
@@ -528,6 +529,7 @@
       </actuator>
       <joint name="finger_1_2_to_finger_1_3">
           <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+      </joint>
   </transmission>
 
   <transmission name="finger2_1_trans" type="SimpleTransmission">
@@ -547,6 +549,7 @@
       </actuator>
       <joint name="finger_2_1_to_finger_2_2">
           <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+      </joint>
   </transmission>
 
   <transmission name="finger2_3_trans" type="SimpleTransmission">
@@ -556,6 +559,7 @@
       </actuator>
       <joint name="finger_2_2_to_finger_2_3">
           <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+      </joint>
   </transmission>
 
   <transmission name="finger2_3_trans" type="SimpleTransmission">
@@ -565,6 +569,7 @@
       </actuator>
       <joint name="base_to_finger_3_2">
           <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+      </joint>
   </transmission>
 
   <transmission name="finger3_3_trans" type="SimpleTransmission">
