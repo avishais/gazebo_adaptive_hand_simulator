@@ -112,7 +112,7 @@ class SimHandNode():
 
     def MoveServosProxy(self,req):
         if (len(req.pos) < self.num_fingers):
-            rospy.logerr("[hand_node] Command is not compatible with the number (%d) of fingers." % self.num_fingers)
+            rospy.logerr("[hand_node] Command vector size (%d) is not compatible with the number (%d) of fingers." % (len(req.pos), self.num_fingers))
             return 1
         self.act_angles = np.array(req.pos[:self.num_fingers])
 

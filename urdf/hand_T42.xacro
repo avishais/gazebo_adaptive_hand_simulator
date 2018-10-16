@@ -26,7 +26,7 @@
     <color rgba="0.106 0.227 0.631 1"/>
   </xacro:macro>  
 
-  <xacro:property name="rubber_friction_coefficient" value="1.16" />
+  <xacro:property name="rubber_friction_coefficient" value="1.16" />  <!-- True: 1.16 -->
   <xacro:property name="rubber_contact_stiffness_coefficient" value="1000000.0" />
   <xacro:property name="rubber_contact_damping_coefficient" value="1.0" />
   <xacro:property name="swivel_distance" value="0.0260" /> <!-- Not sure if this is the right distance for T42 -->
@@ -107,7 +107,7 @@
     <link name="finger_1_1">
         <inertial>
             <origin xyz="-0.015875 -0.009000 -0.071550" />
-            <mass value="0.1" />
+            <mass value="0.1" />  <!-- 0.018485 -->
             <inertia ixx="0.01" ixy="0.0" ixz="0.0" iyy="0.01" iyz="0.0" izz="0.01" />
         </inertial>
         <visual>
@@ -134,7 +134,7 @@
     <link name="finger_1_2">
         <inertial>
             <origin xyz="-0.015875 -0.011709 -0.048006" />
-            <mass value="0.1" />
+            <mass value="0.1" /> <!-- 0.02369 -->
             <inertia ixx="0.01" ixy="0.0" ixz="0.0" iyy="0.01" iyz="0.0" izz="0.01" />
         </inertial>
         <visual>
