@@ -95,7 +95,7 @@ class keyboard_control():
             return self.act_angles + np.array([-self.dq,0])
         
         if ch == '[': # Close
-            return np.array([0.04,0.04])
+            return np.array([0.08,0.08])
         if ch == ']': # Open
             return np.array([0.0,0.0])
         if ch == 'r': # Reset
