@@ -4,6 +4,8 @@ gripper: {
 reflex: {
   proximal_finger_spring_coefficient: 5,
   distal_finger_spring_coefficient: 10,
+  proximal_finger_damping_coefficient: 0,
+  distal_finger_damping_coefficient: 0,
   tendon_max_force: 300,
   finger_tendon_force_distribution: [1,0.5],
   lift_values: [0.0,0.2],
@@ -11,6 +13,8 @@ reflex: {
 model_O: {
   proximal_finger_spring_coefficient: 5,
   distal_finger_spring_coefficient: 10,
+  proximal_finger_damping_coefficient: 0,
+  distal_finger_damping_coefficient: 0,
   tendon_max_force: 300,
   finger_tendon_force_distribution: [1,0.5],
   lift_values: [-0.01,-0.21],
@@ -18,6 +22,8 @@ model_O: {
 model_T42: {
   proximal_finger_spring_coefficient: 5,
   distal_finger_spring_coefficient: 10,
+  proximal_finger_damping_coefficient: 4,
+  distal_finger_damping_coefficient: 8,
   tendon_max_force: 150,
   finger_tendon_force_distribution: [1,0.5],
   lift_values: [0,0.2],

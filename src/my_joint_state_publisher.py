@@ -13,14 +13,20 @@ import rospy
 import numpy as np 
 from std_msgs.msg import Float64, Float32MultiArray
 from gazebo_msgs.msg import LinkStates
+from rosgraph_msgs.msg import Clock
 import PyKDL
+
 
 class my_joint_state_publisher():
 
     joint_angles = None#, dtype=np.float32)
+    joint_angles_prev = None
+    joint_vels = None
     order = np.array([0,0,0,0,0,0,0,0,0])
     msg = Float32MultiArray()
     Gtype = None
+    current_time = 0.0
+    prev_time = 0.0
 
     def __init__(self):
         rospy.init_node('my_joint_state_publisher', anonymous=True)
@@ -30,16 +36,27 @@ class my_joint_state_publisher():
 
         if self.Gtype == 'reflex' or self.Gtype == 'model_O':
             self.joint_angles = [0.,0.,0.,0.,0.,0.,0.,0.]
+            self.joint_angles_prev = [0.,0.,0.,0.,0.,0.,0.,0.]
+            self.joint_vels = [0.,0.,0.,0.,0.,0.,0.,0.]
         else:
             self.joint_angles = [0.,0.,0.,0.]
+            self.joint_angles_prev = [0.,0.,0.,0.]
+            self.joint_vels = [0.,0.,0.,0.]
 
         rospy.Subscriber('/gazebo/link_states', LinkStates, self.linkStatesCallback)
+        rospy.Subscriber('/clock', Clock, self.ClockCallback)
         joint_states_pub = rospy.Publisher('/hand/my_joint_states', Float32MultiArray, queue_size=10)
+        joint_vel_pub = rospy.Publisher('/hand/my_joint_velocities', Float32MultiArray, queue_size=10)
 
         rate = rospy.Rate(100)
         while not rospy.is_shutdown():
+            self.UpdateVelocities()
+
             self.msg.data = self.joint_angles
             joint_states_pub.publish(self.msg)
+
+            self.msg.data = self.joint_vels
+            joint_vel_pub.publish(self.msg)            
 
             # rospy.spin()
             rate.sleep()
@@ -113,6 +130,22 @@ class my_joint_state_publisher():
             else:
                 self.joint_angles[2] = np.pi+a[1]
             self.joint_angles[3] = -(q_2_2.Inverse()*q_2_1).GetEulerZYX()[2]
+
+    def ClockCallback(self, msg):
+        self.current_time = msg.clock.secs + msg.clock.nsecs * 1e-9
+
+    # Coumputes 1st-order joint velocities 
+    def UpdateVelocities(self):
+
+        dV = np.array(self.joint_angles) - np.array(self.joint_angles_prev)
+        dT = self.current_time - self.prev_time
+
+        self.joint_vels = np.true_divide(dV, dT if dT>0 else 1-3)
+        self.joint_vels[np.abs(self.joint_vels) < 1e-2] = 0 # Suppress numerical errors that may cause vibrations
+
+        self.joint_angles_prev = np.copy(self.joint_angles)
+        self.prev_time = self.current_time
+
 
     def getNameOrder(self, names):
 

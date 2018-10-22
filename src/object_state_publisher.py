@@ -36,6 +36,7 @@ class object_state_publisher():
 
             if self.R_obj != None and self.R_hand != None:
                 object_pos = self.obj_pos - self.hand_pos # Position relative to the hands base link
+                object_pos = np.array([object_pos[1],-object_pos[0],object_pos[2]])
                 obj_orientation = (self.R_hand*self.R_obj.Inverse()).GetEulerZYX() # Orientation relative to hand - I did not verify that this is correct
 
                 self.msg.data = object_pos

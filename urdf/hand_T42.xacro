@@ -30,6 +30,10 @@
   <xacro:property name="rubber_contact_stiffness_coefficient" value="1000000.0" />
   <xacro:property name="rubber_contact_damping_coefficient" value="1.0" />
   <xacro:property name="swivel_distance" value="0.0260" /> <!-- Not sure if this is the right distance for T42 -->
+  <xacro:property name="joint_damping_coefficient" value="5.0" />
+  <xacro:property name="joint_friction_coefficient" value="0.0" />
+
+
 
   <link name="world" />
 
@@ -127,7 +131,7 @@
         </collision>
     </link>
     <gazebo reference="finger_1_1">
-      <selfCollide>true</selfCollide>
+      <selfCollide>false</selfCollide>
       <material>Gazebo/Red</material>
     </gazebo>
     
@@ -156,7 +160,7 @@
         </collision>
     </link>
     <gazebo reference="finger_1_2">
-      <selfCollide>true</selfCollide>
+      <selfCollide>false</selfCollide>
       <mu1>${rubber_friction_coefficient}</mu1>
       <mu2>${rubber_friction_coefficient}</mu2>
       <kp>${rubber_contact_stiffness_coefficient}</kp>
@@ -202,7 +206,7 @@
         </collision>
     </link>
     <gazebo reference="finger_2_1">
-      <selfCollide>true</selfCollide>
+      <selfCollide>false</selfCollide>
       <material>Gazebo/Red</material>
     </gazebo>
 
@@ -229,7 +233,7 @@
         </collision>
     </link>
     <gazebo reference="finger_2_2">
-      <selfCollide>true</selfCollide>
+      <selfCollide>false</selfCollide>
       <mu1>${rubber_friction_coefficient}</mu1>
       <mu2>${rubber_friction_coefficient}</mu2>
       <kp>${rubber_contact_stiffness_coefficient}</kp>
@@ -332,7 +336,7 @@
         <child link="finger_1_1" />
         <limit effort="10000" lower="0.0" upper="3.0" velocity="2" />
         <axis xyz="1 0 0" />
-        <dynamics damping="5" friction="0.0" />
+        <dynamics damping="${joint_damping_coefficient}" friction="${joint_friction_coefficient}" />
     </joint>
     
     <joint name="finger_1_1_to_finger_1_2" type="revolute">
@@ -341,7 +345,7 @@
         <child link="finger_1_2" />
         <limit effort="10000" lower="0.0" upper="1.57" velocity="2" />
         <axis xyz="1 0 0" />
-        <dynamics damping="5" friction="0.0" />
+        <dynamics damping="${joint_damping_coefficient}" friction="${joint_friction_coefficient}" />
     </joint>
 
     <joint name="base_link_to_swivel_2" type="fixed">
@@ -356,7 +360,7 @@
         <child link="finger_2_1" />
         <limit effort="10000" lower="0.0" upper="3.0" velocity="2" />
         <axis xyz="1 0 0" />
-        <dynamics damping="5" friction="0.0" />
+        <dynamics damping="${joint_damping_coefficient}" friction="${joint_friction_coefficient}" />
     </joint>
 
     <joint name="finger_2_1_to_finger_2_2" type="revolute">
@@ -365,7 +369,7 @@
         <child link="finger_2_2" />
         <limit effort="10000" lower="0.0" upper="1.57" velocity="2" />
         <axis xyz="1 0 0" />
-        <dynamics damping="5" friction="0.0" />
+        <dynamics damping="${joint_damping_coefficient}" friction="${joint_friction_coefficient}" />
     </joint>
     
 
