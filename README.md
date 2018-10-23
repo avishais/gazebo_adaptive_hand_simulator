@@ -17,3 +17,6 @@ To run the simulation:
         
     5. rosrun hand_simulator keyboard_control.py (Loads keyboard control - tested only on the Model-T42).
     
+
+
+[![Demo with Model T42](https://img.youtube.com/vi/Mz0lp8VCFuk/0.jpg)](https://youtu.be/Mz0lp8VCFuk)
