@@ -20,6 +20,7 @@ class SimHandNode():
 
     act_torque = np.array([0.,0.,0.,0.]) # left_proximal, left_distal, right_proximal, right_distal
     act_angles = None # actuator angles of all three fingers
+    pinching_angle = 0
     fingers_angles = np.array([0.,0.,0.,0.]) # left_proximal, left_distal, right_proximal, right_distal
     fingers_vels = np.array([0.,0.,0.,0.]) # left_proximal, left_distal, right_proximal, right_distal
     ref_angles = np.array([0.,0.,0.,0.,0.,0.]) # spring reference angle left_proximal, left_distal, right_proximal, right_distal   
@@ -60,6 +61,7 @@ class SimHandNode():
         #initialize service handlers:
         rospy.Service('MoveServos', MoveServos, self.MoveServosProxy)
         rospy.Service('LiftHand', Empty, self.LiftHandProxy)
+        rospy.Service('PinchingAngle', MoveServos, self.PinchingAngleProxy)
 
         rospy.Subscriber('/hand/my_joint_states', Float32MultiArray, self.JointStatesCallback)
         rospy.Subscriber('/hand/my_joint_velocities', Float32MultiArray, self.JointVelCallback)
@@ -84,26 +86,36 @@ class SimHandNode():
         while not rospy.is_shutdown():
 
             tendon_forces = self.Q.dot( self.act_angles.reshape(self.num_fingers,1) )
-            self.act_torque = self.R.dot( tendon_forces ) - self.K.dot( self.fingers_angles - self.ref_angles ) - self.D.dot( self.fingers_vels )
+            
 
             if self.num_fingers == 3:
+                self.act_torque = self.R.dot( tendon_forces ) - self.K.dot( self.fingers_angles - self.ref_angles ) # Damping was not implented here yet
+
                 self.pub_f1_j12.publish(self.act_torque[0])
                 self.pub_f1_j23.publish(self.act_torque[1])
                 self.pub_f2_j12.publish(self.act_torque[2])
                 self.pub_f2_j23.publish(self.act_torque[3])
                 self.pub_f3_jb2.publish(self.act_torque[4])
                 self.pub_f3_j23.publish(self.act_torque[5])
+                
+                self.pub_f1_jb1.publish(self.pinching_angle)
+                self.pub_f2_jb1.publish(-self.pinching_angle)
+
 
             if self.num_fingers == 2:
+                self.act_torque = self.R.dot( tendon_forces ) - self.K.dot( self.fingers_angles - self.ref_angles ) - self.D.dot( self.fingers_vels ) # Damping does not work well because of numerical errors
+
                 self.pub_f1_jb1.publish(self.act_torque[0])
                 self.pub_f1_j12.publish(self.act_torque[1])
                 self.pub_f2_jb1.publish(self.act_torque[2])
                 self.pub_f2_j12.publish(self.act_torque[3])
+
             
             msg.data = self.act_angles
             self.gripper_angles_pub.publish(msg)
             msg.data = tendon_forces
             self.gripper_load_pub.publish(msg)
+            
 
             self.pub_lift.publish(self.lift_values[int(self.lift_flag==True)])
 
@@ -130,7 +142,7 @@ class SimHandNode():
         else:
             self.fingers_vels = vel.reshape(4,1)
 
-    def MoveServosProxy(self,req):
+    def MoveServosProxy(self, req):
         if (len(req.pos) < self.num_fingers):
             rospy.logerr("[hand_node] Command vector size (%d) is not compatible with the number (%d) of fingers." % (len(req.pos), self.num_fingers))
             return 1
@@ -148,6 +160,15 @@ class SimHandNode():
         self.lift_flag = not self.lift_flag
 
         return EmptyResponse() 
+
+    def PinchingAngleProxy(self, req):
+        if len(req.pos) > 1:
+            rospy.logerr("[hand_node] To many values in command vector.")
+
+        self.pinching_angle = req.pos[0]
+
+        return 0
+        
 
 
 
