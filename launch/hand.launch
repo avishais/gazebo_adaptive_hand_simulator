@@ -6,7 +6,7 @@
   <arg name="gui" default="true"/>
   <arg name="headless" default="false"/>
   <arg name="debug" default="false"/>
-  <arg name="gripper" default="model_T42"/> 
+  <arg name="gripper" default="hand_T42"/> 
   <arg name="fingers3" default="false"/>
   <!-- <arg name="world" default="$(find hand_simulator)/worlds/hand.world"/> -->
 
