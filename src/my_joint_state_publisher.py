@@ -50,7 +50,7 @@ class my_joint_state_publisher():
 
         rate = rospy.Rate(100)
         while not rospy.is_shutdown():
-            self.UpdateVelocities()
+            # self.UpdateVelocities() # Update is now done in linkStatesCallback(.)
 
             self.msg.data = self.joint_angles
             joint_states_pub.publish(self.msg)
@@ -76,12 +76,16 @@ class my_joint_state_publisher():
             q_2_3 = PyKDL.Rotation.Quaternion(msg.pose[self.order[6]].orientation.x, msg.pose[self.order[6]].orientation.y, msg.pose[self.order[6]].orientation.z, msg.pose[self.order[6]].orientation.w)
             q_3_2 = PyKDL.Rotation.Quaternion(msg.pose[self.order[7]].orientation.x, msg.pose[self.order[7]].orientation.y, msg.pose[self.order[7]].orientation.z, msg.pose[self.order[7]].orientation.w)
             q_3_3 = PyKDL.Rotation.Quaternion(msg.pose[self.order[8]].orientation.x, msg.pose[self.order[8]].orientation.y, msg.pose[self.order[8]].orientation.z, msg.pose[self.order[8]].orientation.w)
+            # Velocity should be added here
         else:
             q_1_1 = PyKDL.Rotation.Quaternion(msg.pose[self.order[1]].orientation.x, msg.pose[self.order[1]].orientation.y, msg.pose[self.order[1]].orientation.z, msg.pose[self.order[1]].orientation.w)
             q_1_2 = PyKDL.Rotation.Quaternion(msg.pose[self.order[2]].orientation.x, msg.pose[self.order[2]].orientation.y, msg.pose[self.order[2]].orientation.z, msg.pose[self.order[2]].orientation.w)
             q_2_1 = PyKDL.Rotation.Quaternion(msg.pose[self.order[4]].orientation.x, msg.pose[self.order[4]].orientation.y, msg.pose[self.order[4]].orientation.z, msg.pose[self.order[4]].orientation.w)
             q_2_2 = PyKDL.Rotation.Quaternion(msg.pose[self.order[5]].orientation.x, msg.pose[self.order[5]].orientation.y, msg.pose[self.order[5]].orientation.z, msg.pose[self.order[5]].orientation.w)
-            
+            dq_1_1 = msg.twist[self.order[1]].angular.z
+            dq_1_2 = msg.twist[self.order[2]].angular.z
+            dq_2_1 = msg.twist[self.order[4]].angular.z
+            dq_2_2 = msg.twist[self.order[5]].angular.z
         
         if self.Gtype == 'reflex':
             # self.joint_angles = [f1_1,f1_2,f1_3,f2_1,f2_2,f2_3,f3_2,f3_3]
@@ -131,6 +135,9 @@ class my_joint_state_publisher():
                 self.joint_angles[2] = np.pi+a[1]
             self.joint_angles[3] = -(q_2_2.Inverse()*q_2_1).GetEulerZYX()[2]
 
+            self.joint_vels = np.array([dq_1_1, dq_1_2 - dq_1_1, dq_2_1, dq_2_2 - dq_2_1]) # Currently finger velocity do not compensate base motion
+            self.joint_vels[np.abs(self.joint_vels) < 1e-3] = 0.
+
     def ClockCallback(self, msg):
         self.current_time = msg.clock.secs + msg.clock.nsecs * 1e-9
 
@@ -144,7 +151,7 @@ class my_joint_state_publisher():
         self.joint_vels[np.abs(self.joint_vels) < 1e-2] = 0 # Suppress numerical errors that may cause vibrations
 
         self.joint_angles_prev = np.copy(self.joint_angles)
-        self.prev_time = self.current_time
+        self.prev_time = np.copy(self.current_time)
 
 
     def getNameOrder(self, names):
