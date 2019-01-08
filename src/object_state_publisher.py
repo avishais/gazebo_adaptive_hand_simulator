@@ -17,6 +17,7 @@ import PyKDL
 class object_state_publisher():
 
     obj_pos = np.array([0.,0.,0.])
+    obj_vel = np.array([0.,0.,0.])
     R_obj = None
     hand_pos = np.array([0.,0.,0.])
     R_hand = None
@@ -29,6 +30,7 @@ class object_state_publisher():
         rospy.Subscriber('/gazebo/model_states', ModelStates, self.ObjCallback)
         rospy.Subscriber('/gazebo/link_states', LinkStates, self.HandCallback)
         object_position_pub = rospy.Publisher('/hand/obj_pos', Float32MultiArray, queue_size=10)
+        object_velocity_pub = rospy.Publisher('/hand/obj_vel', Float32MultiArray, queue_size=10)
         object_orientation_pub = rospy.Publisher('/hand/obj_orientation', Float32MultiArray, queue_size=10)
 
         rate = rospy.Rate(100)
@@ -41,6 +43,8 @@ class object_state_publisher():
 
                 self.msg.data = object_pos
                 object_position_pub.publish(self.msg)
+                self.msg.data = self.obj_vel
+                object_velocity_pub.publish(self.msg)
                 self.msg.data = obj_orientation
                 object_orientation_pub.publish(self.msg)
 
@@ -51,6 +55,7 @@ class object_state_publisher():
         idx = self.getNameOrder(msg.name, 'object')
 
         self.obj_pos = np.array([msg.pose[idx].position.x, msg.pose[idx].position.y, msg.pose[idx].position.z])
+        self.obj_vel = np.array([msg.twist[idx].linear.y, -msg.twist[idx].linear.x, msg.twist[idx].linear.z])
         self.R_obj = PyKDL.Rotation.Quaternion(msg.pose[idx].orientation.x, msg.pose[idx].orientation.y, msg.pose[idx].orientation.z, msg.pose[idx].orientation.w)
         
 

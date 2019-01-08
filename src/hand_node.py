@@ -86,7 +86,6 @@ class SimHandNode():
         while not rospy.is_shutdown():
 
             tendon_forces = self.Q.dot( self.act_angles.reshape(self.num_fingers,1) )
-            
 
             if self.num_fingers == 3:
                 self.act_torque = self.R.dot( tendon_forces ) - self.K.dot( self.fingers_angles - self.ref_angles ) # Damping was not implented here yet

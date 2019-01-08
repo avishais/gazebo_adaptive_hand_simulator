@@ -12,11 +12,18 @@
       <uri>model://sun</uri>
     </include>
 
+    <physics type='ode'>
+      <max_step_size>0.001000</max_step_size>
+      <real_time_factor>1.000000</real_time_factor>
+      <real_time_update_rate>1000.000000</real_time_update_rate>
+      <!-- <gravity>0.000000 0.000000 -9.800000</gravity> -->
+    </physics>
+
     <!-- Focus camera on tall pendulum -->
     <gui fullscreen='0'>
       <camera name='user_camera'>
-        <pose>2.927360 -2.376610 2.740080 0.000000 0.275643 2.356190</pose>
-        <!-- <pose>1. 1. 1. 1. 1. 1.</pose> -->
+        <!-- <pose>2.927360 -2.376610 2.740080 0.000000 0.275643 2.356190</pose> -->
+        <pose>-0.27 -0.21 1.113 0.0 0.641 0.314</pose>
         <view_controller>orbit</view_controller>
       </camera>
     </gui>
