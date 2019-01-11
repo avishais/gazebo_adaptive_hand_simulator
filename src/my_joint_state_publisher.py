@@ -16,6 +16,7 @@ from gazebo_msgs.msg import LinkStates
 from rosgraph_msgs.msg import Clock
 import PyKDL
 
+windowSize = 10
 
 class my_joint_state_publisher():
 
@@ -27,6 +28,7 @@ class my_joint_state_publisher():
     Gtype = None
     current_time = 0.0
     prev_time = 0.0
+    win = np.array([])
 
     def __init__(self):
         rospy.init_node('my_joint_state_publisher', anonymous=True)
@@ -135,13 +137,23 @@ class my_joint_state_publisher():
                 self.joint_angles[2] = np.pi+a[1]
             self.joint_angles[3] = -(q_2_2.Inverse()*q_2_1).GetEulerZYX()[2]
 
-            self.joint_vels = np.array([dq_1_1, dq_1_2 - dq_1_1, dq_2_1, dq_2_2 - dq_2_1]) # Currently finger velocity do not compensate base motion
-            self.joint_vels[np.abs(self.joint_vels) < 1e-3] = 0.
+            # Apply mean filter to joint velocities with windowSize
+            if self.win.shape[0] < windowSize:
+                self.joint_vels = np.array([-dq_1_1, -(dq_1_2 - dq_1_1), dq_2_1, dq_2_2 - dq_2_1]) # Currently finger velocity do not compensate base motion
+                self.win = np.append(self.win, self.joint_vels).reshape(-1, 4)
+            else:
+                v = np.array([-dq_1_1, -(dq_1_2 - dq_1_1), dq_2_1, dq_2_2 - dq_2_1]) # Currently finger velocity do not compensate base motion
+                self.win = np.append(self.win, v).reshape(-1, 4)
+                self.joint_vels = np.mean(self.win, axis=0)
+                self.win = np.delete(self.win, 0, axis=0)  
+            self.joint_vels[np.abs(self.joint_vels) <= 0.1e-2] = 0.    
+
+            # print self.joint_vels
 
     def ClockCallback(self, msg):
         self.current_time = msg.clock.secs + msg.clock.nsecs * 1e-9
 
-    # Coumputes 1st-order joint velocities 
+    # Computes 1st-order joint velocities - Not used 
     def UpdateVelocities(self):
 
         dV = np.array(self.joint_angles) - np.array(self.joint_angles_prev)
@@ -186,10 +198,6 @@ class my_joint_state_publisher():
             if str == 'finger_3_3':
                 self.order[8] = i
                 continue
-
-
-
-
 
 
 

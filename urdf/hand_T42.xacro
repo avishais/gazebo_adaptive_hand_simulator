@@ -31,7 +31,7 @@
   <xacro:property name="rubber_contact_damping_coefficient" value="1.0" />
   <xacro:property name="swivel_distance" value="0.0260" /> <!-- Not sure if this is the right distance for T42 -->
   <xacro:property name="joint_damping_coefficient" value="7.0" />
-  <xacro:property name="joint_friction_coefficient" value="0.4" />
+  <xacro:property name="joint_friction_coefficient" value="0.0" />
 
 
 

@@ -102,7 +102,9 @@ class SimHandNode():
 
 
             if self.num_fingers == 2:
-                self.act_torque = self.R.dot( tendon_forces ) - self.K.dot( self.fingers_angles - self.ref_angles ) - self.D.dot( self.fingers_vels ) # Damping does not work well because of numerical errors
+                d = self.set_damping_matrix()
+
+                self.act_torque = self.R.dot( tendon_forces ) - self.K.dot( self.fingers_angles - self.ref_angles ) - d.dot( self.fingers_vels ) # Damping does not work well because of numerical errors
 
                 self.pub_f1_jb1.publish(self.act_torque[0])
                 self.pub_f1_j12.publish(self.act_torque[1])
@@ -122,6 +124,19 @@ class SimHandNode():
             self.gripper_lift_pub.publish(msg_lift)
 
             rate.sleep()
+
+    def set_damping_matrix(self):
+        d = np.zeros((2*self.num_fingers,2*self.num_fingers))
+        for i in range(2*self.num_fingers):
+            if np.abs(self.fingers_vels[i]) < 0.1e-2:
+                d[i,i] = 0.0
+                continue
+            if np.abs(self.fingers_vels[i]) < 0.4e-2:
+                d[i,i] = self.D[i,i]/4
+                continue
+            d[i,i] = self.D[i,i]
+
+        return d
 
     def JointStatesCallback(self, msg):
         angles = np.array(msg.data)

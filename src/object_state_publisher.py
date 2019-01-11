@@ -14,6 +14,8 @@ from std_msgs.msg import Float64, Float32MultiArray
 from gazebo_msgs.msg import ModelStates, LinkStates
 import PyKDL
 
+windowSize = 10
+
 class object_state_publisher():
 
     obj_pos = np.array([0.,0.,0.])
@@ -22,6 +24,7 @@ class object_state_publisher():
     hand_pos = np.array([0.,0.,0.])
     R_hand = None
     msg = Float32MultiArray()
+    win = np.array([])
     
 
     def __init__(self):
@@ -55,9 +58,17 @@ class object_state_publisher():
         idx = self.getNameOrder(msg.name, 'object')
 
         self.obj_pos = np.array([msg.pose[idx].position.x, msg.pose[idx].position.y, msg.pose[idx].position.z])
-        self.obj_vel = np.array([msg.twist[idx].linear.y, -msg.twist[idx].linear.x, msg.twist[idx].linear.z])
         self.R_obj = PyKDL.Rotation.Quaternion(msg.pose[idx].orientation.x, msg.pose[idx].orientation.y, msg.pose[idx].orientation.z, msg.pose[idx].orientation.w)
         
+        # Apply mean filter to object velocity with windowSize
+        if self.win.shape[0] < windowSize:
+            self.obj_vel = np.array([msg.twist[idx].linear.y, -msg.twist[idx].linear.x, msg.twist[idx].linear.z])
+            self.win = np.append(self.win, self.obj_vel).reshape(-1, 3)
+        else:
+            v = np.array([msg.twist[idx].linear.y, -msg.twist[idx].linear.x, msg.twist[idx].linear.z])
+            self.win = np.append(self.win, v).reshape(-1, 3)
+            self.obj_vel = np.mean(self.win, axis=0)
+            self.win = np.delete(self.win, 0, axis=0)      
 
     def HandCallback(self, msg):
 
