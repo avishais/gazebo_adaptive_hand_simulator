@@ -11,16 +11,16 @@
         </inertial> 
         <visual>
             <geometry>
-                <cylinder length="0.09" radius="0.018"/>
+                <mesh filename="package://hand_simulator/meshes/screwdriver.STL"/>
             </geometry>
-            <origin rpy="0 0 0" xyz="0 0 0"/>
+            <origin rpy="0 3.14 0" xyz="0 0 0"/>
             <material name="Blue" />
         </visual>
         <collision>
             <geometry>
-                <cylinder length="0.09" radius="0.018"/>
+                <mesh filename="package://hand_simulator/meshes/screwdriver.STL"/>
             </geometry>
-            <origin rpy="0 0 0" xyz="0 0 0"/>
+            <origin rpy="0 3.14 0" xyz="0 0 0"/>
         </collision>
     </link>
 

@@ -3,8 +3,8 @@
   <!-- these are the arguments you can pass this launch file, for example paused:=true -->
   <arg name="paused" default="false"/>
   <arg name="use_sim_time" default="true"/>
-  <arg name="gui" default="true"/>
-  <arg name="headless" default="false"/>
+  <arg name="gui" default="True"/>
+  <arg name="headless" default="False"/>
   <arg name="debug" default="false"/>
   <arg name="gripper" default="hand_T42"/> 
   <arg name="fingers3" default="false"/>
@@ -29,9 +29,11 @@
   <node name="urdf_spawner" pkg="gazebo_ros" type="spawn_model"
         args="-z 0.0 -unpause -urdf -model hand -param robot_description" respawn="false" output="screen" />
 
-  <node name="spawn_table" pkg="gazebo_ros" type="spawn_model" args="-file $(find hand_simulator)/urdf/table.urdf -urdf -x 0 -z 0 -model table" />
+  <!-- <node name="spawn_table" pkg="gazebo_ros" type="spawn_model" args="-file $(find hand_simulator)/urdf/table.urdf -urdf -x 0 -z 0 -model table" /> -->
 
   <node name="spawn_object" pkg="gazebo_ros" type="spawn_model" args="-file $(find hand_simulator)/urdf/object.urdf -urdf -x 0.192 -z 0.6 -model object" />
+
+    <node name="spawn_box" pkg="gazebo_ros" type="spawn_model" args="-file $(find hand_simulator)/urdf/box.urdf -urdf -x 0.0 -z 0.38 -model box" />
 
   <!-- Load custom joint_state_publisher and object_state_publisher -->
   <node pkg="hand_simulator" type="my_joint_state_publisher.py" name="my_joint_state_publisher" output="screen">
