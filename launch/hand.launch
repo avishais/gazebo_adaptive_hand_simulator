@@ -31,7 +31,7 @@
 
   <!-- <node name="spawn_table" pkg="gazebo_ros" type="spawn_model" args="-file $(find hand_simulator)/urdf/table.urdf -urdf -x 0 -z 0 -model table" /> -->
 
-  <node name="spawn_object" pkg="gazebo_ros" type="spawn_model" args="-file $(find hand_simulator)/urdf/object.urdf -urdf -x 0.192 -z 0.6 -model object" />
+  <node name="spawn_object" pkg="gazebo_ros" type="spawn_model" args="-file $(find hand_simulator)/urdf/object.urdf -urdf -x 0.195 -z 0.6 -model object" />
 
     <node name="spawn_box" pkg="gazebo_ros" type="spawn_model" args="-file $(find hand_simulator)/urdf/box.urdf -urdf -x 0.0 -z 0.38 -model box" />
 

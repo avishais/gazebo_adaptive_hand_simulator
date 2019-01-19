@@ -321,7 +321,7 @@
         <parent link="rail" />
         <child link="base_link" />
         <axis xyz="0 0 1"/>
-        <limit effort="1000.0" lower="-100." upper="100." velocity="1"/>
+        <limit effort="1000.0" lower="-100." upper="100." velocity="0.25"/>
     </joint>  
 
     <joint name="base_link_to_swivel_1" type="fixed">
