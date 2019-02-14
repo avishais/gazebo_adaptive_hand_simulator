@@ -15,7 +15,7 @@
     <physics type='bullet'>
       <max_step_size>0.001000</max_step_size>
       <real_time_factor>1.000000</real_time_factor>
-      <real_time_update_rate>2000.000000</real_time_update_rate>
+      <real_time_update_rate>1000.000000</real_time_update_rate>
       <!-- <gravity>0.000000 0.000000 -9.800000</gravity> -->
     </physics>
 
