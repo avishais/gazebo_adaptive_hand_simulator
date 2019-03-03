@@ -1,6 +1,10 @@
 # Gazebo underactuated hand simulator
 
 The simulator offers three hands: Reflex, Model-O and Model-T42 (Yale OpenHand project - https://www.eng.yale.edu/grablab/openhand/). 
+
+Install:
+    1. sudo apt-get install ros-kinetic-gazebo-ros-pkgs ros-kinetic-gazebo-ros-control
+    2. sudo apt-get install ros-kinetic-joint-state-controller
     
 To run the simulation:
 
