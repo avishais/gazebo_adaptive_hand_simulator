@@ -64,7 +64,7 @@ class object_state_publisher():
                     self.obj_vel = np.mean(self.win, axis=0)
                     self.win = np.delete(self.win, 0, axis=0)   
 
-                self.obj_vel[np.where(np.abs(self.obj_vel) < 1e-5)] = 0.0
+                # self.obj_vel[np.where(np.abs(self.obj_vel) < 1e-5)] = 0.0
 
                 self.msg.data = object_pos
                 object_position_pub.publish(self.msg)
