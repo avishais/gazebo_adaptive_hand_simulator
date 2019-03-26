@@ -13,18 +13,23 @@ import numpy as np
 from std_msgs.msg import Float64, Float32MultiArray
 from gazebo_msgs.msg import ModelStates, LinkStates
 import PyKDL
+import time
 
-windowSize = 10
+windowSize = 100
 
 class object_state_publisher():
 
     obj_pos = np.array([0.,0.,0.])
+    obj_pos_prev = np.array([0.,0.,0.])
     obj_vel = np.array([0.,0.,0.])
     R_obj = None
     hand_pos = np.array([0.,0.,0.])
     R_hand = None
     msg = Float32MultiArray()
     win = np.array([])
+    t_prev = 0.0
+    O = np.array([]) # Object last positions
+    dt = 0.0001
     
 
     def __init__(self):
@@ -36,13 +41,28 @@ class object_state_publisher():
         object_velocity_pub = rospy.Publisher('/hand/obj_vel', Float32MultiArray, queue_size=10)
         object_orientation_pub = rospy.Publisher('/hand/obj_orientation', Float32MultiArray, queue_size=10)
 
-        rate = rospy.Rate(100)
+        self.t_prev = rospy.get_time()
+
+        self.freq = 50.0
+        self.rate = rospy.Rate(self.freq)
         while not rospy.is_shutdown():
 
             if self.R_obj != None and self.R_hand != None:
                 object_pos = self.obj_pos - self.hand_pos # Position relative to the hands base link
                 object_pos = np.array([object_pos[1],-object_pos[0],object_pos[2]])
                 obj_orientation = (self.R_hand*self.R_obj.Inverse()).GetEulerZYX() # Orientation relative to hand - I did not verify that this is correct
+
+                # Compute object velocity using second order derivative (the gazebo measurement is much more noisy)
+                self.obj_vel = (object_pos - self.obj_pos_prev) / (1/self.freq) #self.dt
+                self.obj_pos_prev = np.copy(object_pos)
+
+                if self.win.shape[0] < windowSize:
+                    self.win = np.append(self.win, self.obj_vel).reshape(-1, 3)
+                else:
+                    v = self.obj_vel
+                    self.win = np.append(self.win, v).reshape(-1, 3)
+                    self.obj_vel = np.mean(self.win, axis=0)
+                    self.win = np.delete(self.win, 0, axis=0)      
 
                 self.msg.data = object_pos
                 object_position_pub.publish(self.msg)
@@ -51,7 +71,7 @@ class object_state_publisher():
                 self.msg.data = obj_orientation
                 object_orientation_pub.publish(self.msg)
 
-            rate.sleep()
+            self.rate.sleep()
 
     def ObjCallback(self, msg):
 
@@ -61,14 +81,11 @@ class object_state_publisher():
         self.R_obj = PyKDL.Rotation.Quaternion(msg.pose[idx].orientation.x, msg.pose[idx].orientation.y, msg.pose[idx].orientation.z, msg.pose[idx].orientation.w)
         
         # Apply mean filter to object velocity with windowSize
-        if self.win.shape[0] < windowSize:
-            self.obj_vel = np.array([msg.twist[idx].linear.y, -msg.twist[idx].linear.x, msg.twist[idx].linear.z])
-            self.win = np.append(self.win, self.obj_vel).reshape(-1, 3)
-        else:
-            v = np.array([msg.twist[idx].linear.y, -msg.twist[idx].linear.x, msg.twist[idx].linear.z])
-            self.win = np.append(self.win, v).reshape(-1, 3)
-            self.obj_vel = np.mean(self.win, axis=0)
-            self.win = np.delete(self.win, 0, axis=0)      
+        # 
+
+        
+
+        # self.rate.sleep()
 
     def HandCallback(self, msg):
 
